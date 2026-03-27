@@ -79,6 +79,16 @@ const ScoutingPage = () => {
             <section className="card">
                 <h2>賽場表現</h2>
                 <div className="form-group">
+                    <label>打法</label>
+                    <select name="strategy" value={form.strategy} onChange={handleChange}>
+                        <option value="防守">防守</option>
+                        <option value="攻擊">攻擊</option>
+                        <option value="推球助攻">推球助攻</option>
+                        <option value="給human球">給 human 球</option>
+                        <option value="廢物">廢物</option>
+                    </select>
+                </div>
+                <div className="form-group">
                     <label>固定投球點</label>
                     <select name="fixed_shot_pos" value={form.fixed_shot_pos} onChange={handleChange}>
                         <option value="無">無</option>
@@ -91,16 +101,6 @@ const ScoutingPage = () => {
                         <option value="無">無</option>
                         <option value="有">有</option>
                         <option value="有但可伸縮">有但可伸縮</option>
-                    </select>
-                </div>
-                <div className="form-group">
-                    <label>打法</label>
-                    <select name="strategy" value={form.strategy} onChange={handleChange}>
-                        <option value="防守">防守</option>
-                        <option value="攻擊">攻擊</option>
-                        <option value="推球助攻">推球助攻</option>
-                        <option value="給human球">給 human 球</option>
-                        <option value="廢物">廢物</option>
                     </select>
                 </div>
                 <div className="form-group">
