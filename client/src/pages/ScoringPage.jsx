@@ -32,7 +32,7 @@ const ScoutingPage = () => {
 
         const payload = {
             ...form,
-            auto_max_score: form.auto_max_score === '' ? 0 : Number(form.auto_max_score)
+            auto_max_score: form.auto_max_score === '' ? '' : Number(form.auto_max_score)
         };
 
         try {
@@ -73,7 +73,7 @@ const ScoutingPage = () => {
                     <label>自動最高進球數</label>
                     <input name="auto_max_score" type="number" value={form.auto_max_score}onChange={e => {
                         const val = e.target.value;
-                        setForm({ ...form, auto_max_score: val === '' ? 0 : parseInt(val) });
+                        setForm({ ...form, auto_max_score: val === '' ? '' : parseInt(val) });
                     }} />
                 </div>
                 <div className="form-group">
