@@ -44,6 +44,12 @@ const ScoutingPage = () => {
         }
     };
 
+    const blockInvalidChar = (e) => {
+        if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+            e.preventDefault();
+        }
+    };
+
     return (
         <main className="container">
             <h1>場記 SCORING</h1>
@@ -71,10 +77,17 @@ const ScoutingPage = () => {
                 </div>
                 <div className="form-group">
                     <label>自動最高進球數</label>
-                    <input name="auto_max_score" type="number" value={form.auto_max_score}onChange={e => {
-                        const val = e.target.value;
-                        setForm({ ...form, auto_max_score: val === '' ? '' : parseInt(val) });
-                    }} />
+                    <input name="auto_max_score" type="text" value={form.auto_max_score}  placeholder='0'
+                        pattern="\d*" inputMode="numeric"
+                        onKeyDown={blockInvalidChar}
+                        onFocus={(e) => e.target.select()}
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            if (val === '' || /^\d+$/.test(val)) {
+                                setForm({ ...form, auto_max_score: val === '' ? '' : parseInt(val) });
+                            }
+                        }}
+                    />
                 </div>
                 <div className="form-group">
                     <label>自動吊掛</label>
