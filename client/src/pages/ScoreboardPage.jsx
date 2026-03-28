@@ -60,7 +60,7 @@ const ScoreboardPage = () => {
                     <label>打法</label>
                     <select value={filter.strategy} onChange={e => setFilter({...filter, strategy: e.target.value})}>
                         <option value="All">所有打法</option>
-                        {['防守', '攻擊', '推球助攻', '給 human 球', 'fw'].map(s => (
+                        {['防守', '攻擊', '推球助攻', '給 human 球', '廢物'].map(s => (
                             <option key={s} value={s}>{s}</option>
                         ))}
                     </select>
