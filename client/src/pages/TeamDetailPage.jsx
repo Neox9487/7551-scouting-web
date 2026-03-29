@@ -100,11 +100,11 @@ const TeamDetailPage = () => {
                         </div>
                         
                         <div className="history-content">
+                            <div className="info-badge highlight">打法: <b>{r.strategy}</b></div>
                             <div className="info-badge">自動進球: <b>{r.auto_max_score}</b></div>
                             <div className="info-badge">自動吊掛: <b>{r.auto_climb}</b></div>
                             <div className="info-badge">Intake: <b>{r.intake}</b></div>
                             <div className="info-badge">固定投球: <b>{r.fixed_shot_pos}</b></div>
-                            <div className="info-badge highlight">打法: <b>{r.strategy}</b></div>
                             <div className="info-badge">吊掛層數: <b>{r.climb_level}</b></div>
                         </div>
 

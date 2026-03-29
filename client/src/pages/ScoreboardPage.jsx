@@ -43,8 +43,6 @@ const ScoreboardPage = () => {
 
     return (
         <main className="container">
-            <h1>記分板 Leaderboard</h1>
-            
             <section className="card" style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
                 <div style={{ flex: 1, minWidth: '200px' }}>
                     <label>搜尋隊號</label>

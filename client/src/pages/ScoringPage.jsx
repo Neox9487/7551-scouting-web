@@ -52,8 +52,6 @@ const ScoutingPage = () => {
 
     return (
         <main className="container">
-            <h1>場記 SCORING</h1>
-
             <section className="card">
                 <h2>基本資訊</h2>
                 <div className="form-group">
