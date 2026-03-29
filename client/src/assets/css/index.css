@@ -325,3 +325,38 @@ td:last-child {
 ::-webkit-scrollbar-track { background: var(--dark-bg); }
 ::-webkit-scrollbar-thumb { background: var(--item-bg); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--pink); }
+
+/* --- Mobile Responsive Updates --- */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 10px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  section.card {
+    padding: 15px;
+    gap: 10px !important;
+  }
+
+  .table-wrapper {
+    margin: 0;
+    padding: 5px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    font-size: 0.85rem; 
+  }
+
+  th, td {
+    padding: 10px 8px; 
+  }
+
+  th:nth-child(5), td:nth-child(5),
+  th:nth-child(6), td:nth-child(6) {
+    display: none;
+  }
+}

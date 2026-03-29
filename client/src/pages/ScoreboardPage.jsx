@@ -96,10 +96,10 @@ const ScoreboardPage = () => {
                         <thead>
                             <tr>
                                 <th>隊號</th>
+                                <th>場次</th>
                                 <th>打法</th>
                                 <th>自動進球</th>
                                 <th>自動吊掛</th>
-                                <th>Intake</th>
                                 <th>吊掛層數</th>
                                 <th>操作</th>
                             </tr>
@@ -108,10 +108,10 @@ const ScoreboardPage = () => {
                             {filteredRecords.map(r => (
                                 <tr key={r.id} onClick={() => navigate(`/team/${r.team_number}`)}>
                                     <td><b>{r.team_number}</b></td>
+                                    <td className='highlight'>{r.match_id}</td>
                                     <td className='highlight'>{r.strategy}</td>
                                     <td>{r.auto_max_score}</td>
                                     <td>{r.auto_climb}</td>
-                                    <td>{r.intake}</td>
                                     <td>{r.climb_level}</td>
                                     <td>
                                         <button 
