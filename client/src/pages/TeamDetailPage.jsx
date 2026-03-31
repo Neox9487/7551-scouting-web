@@ -85,7 +85,9 @@ const TeamDetailPage = () => {
                     <div key={r.id} className="history-item">
                         <div className="history-header">
                             <div>
-                                <span className="match-tag">{r.match_id || 'Practice'}</span>
+                                <span className="match-tag">
+                                    {r.match_type == `practice` ? "Practice" : "Qualification"} {r.match_id} - {r.station}
+                                </span>
                                 <span className="time-tag" style={{ marginLeft: '10px' }}>
                                     {new Date(r.created_at).toLocaleString()}
                                 </span>

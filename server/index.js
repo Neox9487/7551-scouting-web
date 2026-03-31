@@ -22,16 +22,13 @@ const db = mysql.createPool({
 // get team lists
 app.get('/api/teams', async (req, res) => {
     try {
-        const filePath = path.join(__dirname, 'teams.json');
+        const filePath = path.join(__dirname, 'matches.json');
         const data = await fs.readFile(filePath, 'utf8');
-        const teams = JSON.parse(data);
-        
-        teams.sort((a, b) => Number(a.number) - Number(b.number));
-        
-        res.json(teams);
+        const matchData = JSON.parse(data);
+        res.json(matchData);
     } catch (err) {
-        console.error('讀取 teams.json 失敗:', err);
-        res.json([]); 
+        console.error('讀取 matches.json 失敗:', err);
+        res.json({ practice: [], qualification: [] }); 
     }
 });
 
@@ -40,10 +37,11 @@ app.post('/api/save_data', async (req, res) => {
     try {
         const d = req.body;
         const sql = `INSERT INTO records 
-        (team_number, match_id, auto_shot_pos, auto_max_score, auto_climb, fixed_shot_pos, intake, strategy, climb_level, remark) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        (team_number, match_id, match_type, station, auto_shot_pos, auto_max_score, auto_climb, fixed_shot_pos, intake, strategy, climb_level, remark) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
         await db.execute(sql, [
-            d.team_number, d.match_id, d.auto_shot_pos, d.auto_max_score, 
+            d.team_number, d.match_id, d.match_type, d.station, d.auto_shot_pos, d.auto_max_score, 
             d.auto_climb, d.fixed_shot_pos, d.intake, d.strategy, d.climb_level, d.remark
         ]);
         res.status(201).json({ message: "儲存成功" });

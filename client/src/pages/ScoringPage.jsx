@@ -1,69 +1,143 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const ScoutingPage = () => {
-    const [teams, setTeams] = useState([]);
+const ScoringPage = () => {
+    const [allMatchData, setAllMatchData] = useState({ practice: [], qualification: [] });
+    const [availableTeams, setAvailableTeams] = useState([]);
+    
+    const STATIONS = ["Red 1", "Red 2", "Red 3", "Blue 1", "Blue 2", "Blue 3"];
+
     const [form, setForm] = useState({
-        team_number: '未選擇', 
-        match_id: '', 
-        auto_shot_pos: '', 
+        match_type: 'qulification',
+        match_id: '',
+        team_number: '未選擇',
+        station: '',
+        auto_shot_pos: '',
         auto_max_score: 0,
-        auto_climb: '無', 
-        fixed_shot_pos: '無', 
-        intake: '無', 
+        auto_climb: '無',
+        fixed_shot_pos: '無',
+        intake: '無',
         strategy: '防守',
-        climb_level: '無吊掛', 
+        climb_level: '無吊掛',
         remark: ''
     });
 
     useEffect(() => {
         axios.get('/api/teams')
-            .then(res => setTeams(res.data))
-            .catch(err => console.error("無法取得隊伍清單"));
+            .then(res => setAllMatchData(res.data))
+            .catch(err => console.error("無法取得場次資料"));
     }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setForm(prev => ({ ...prev, [name]: value }));
+
+        if (name === 'match_type') {
+            setAvailableTeams([]);
+            setForm(prev => ({ 
+                ...prev, 
+                match_type: value, 
+                match_id: '', 
+                team_number: '未選擇', 
+                station: '' 
+            }));
+        } else if (name === 'match_id') {
+            const currentList = allMatchData[form.match_type] || [];
+            const selectedMatchObj = currentList.find(m => String(m.match) === value);
+            if (selectedMatchObj) {
+                setAvailableTeams(selectedMatchObj.teams);
+                setForm(prev => ({ 
+                    ...prev, 
+                    match_id: value, 
+                    team_number: '未選擇', 
+                    station: '' 
+                }));
+            } else {
+                setAvailableTeams([]);
+                setForm(prev => ({ ...prev, match_id: '', team_number: '未選擇', station: '' }));
+            }
+        } else if (name === 'team_index') {
+            const index = parseInt(value);
+            if (index === -1) {
+                setForm(prev => ({ ...prev, team_number: '未選擇', station: '' }));
+            } else {
+                setForm(prev => ({ 
+                    ...prev, 
+                    team_number: availableTeams[index], 
+                    station: STATIONS[index] 
+                }));
+            }
+        } else {
+            setForm(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleSave = async () => {
-        if (form.team_number === '未選擇') return alert("請先選擇隊伍號碼！");
+        if (!form.match_id) return alert("請選擇場次！");
+        if (form.team_number === '未選擇') return alert("請選擇隊伍！");
 
         const payload = {
             ...form,
-            auto_max_score: form.auto_max_score === '' ? '' : Number(form.auto_max_score)
+            auto_max_score: form.auto_max_score === '' ? 0 : Number(form.auto_max_score)
         };
 
         try {
             await axios.post('/api/save_data', payload);
-            alert("資料儲存成功！");
-            setForm(prev => ({ ...prev, match_id: '', remark: '', auto_max_score: 0 }));
+            alert(`儲存成功!`);
+            
+            setForm(prev => ({ 
+                ...prev, 
+                team_number: '未選擇', 
+                station: '', 
+                auto_max_score: 0, 
+                remark: '' 
+            }));
         } catch (err) {
-            alert("儲存失敗，請檢網路連線狀態");
+            alert("儲存失敗: " + (err.response?.data?.error || err.message));
         }
     };
 
     const blockInvalidChar = (e) => {
-        if (['e', 'E', '+', '-', '.'].includes(e.key)) {
-            e.preventDefault();
-        }
+        if (['e', 'E', '+', '-', '.'].includes(e.key)) e.preventDefault();
     };
 
     return (
         <main className="container">
             <section className="card">
                 <h2>基本資訊</h2>
+                
                 <div className="form-group">
-                    <label>隊伍號碼</label>
-                    <select name="team_number" value={form.team_number} onChange={handleChange}>
-                        <option value="未選擇">-- 請選擇隊伍 --</option>
-                        {teams.map(t => <option key={t.number} value={t.number}>{t.number}</option>)}
+                    <label>比賽類型</label>
+                    <select name="match_type" value={form.match_type} onChange={handleChange}>
+                        <option value="qualification">Qualification</option>
+                        <option value="practice">Practice</option>
                     </select>
                 </div>
+
                 <div className="form-group">
                     <label>場次</label>
-                    <input name="match_id" type="text" value={form.match_id} onChange={handleChange} />
+                    <select name="match_id" value={form.match_id} onChange={handleChange}>
+                        <option value="">-- 請選擇場次 --</option>
+                        {(allMatchData[form.match_type] || []).map(m => (
+                            <option key={m.match} value={m.match}>Match {m.match}</option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="form-group">
+                    <label>隊伍位置</label>
+                    <select 
+                        name="team_index" 
+                        value={availableTeams.indexOf(form.team_number)} 
+                        onChange={handleChange}
+                        disabled={!form.match_id}
+                    >
+                        <option value="-1">-- 請選擇隊伍 --</option>
+                        {availableTeams.map((team, idx) => (
+                            <option key={idx} value={idx}>
+                                {STATIONS[idx]}: {team}
+                            </option>
+                        ))}
+                    </select>
                 </div>
             </section>
 
@@ -75,8 +149,12 @@ const ScoutingPage = () => {
                 </div>
                 <div className="form-group">
                     <label>自動最高進球數</label>
-                    <input name="auto_max_score" type="text" value={form.auto_max_score}  placeholder='0'
-                        pattern="\d*" inputMode="numeric"
+                    <input 
+                        name="auto_max_score" 
+                        type="text" 
+                        value={form.auto_max_score}
+                        pattern="\d*" 
+                        inputMode="numeric"
                         onKeyDown={blockInvalidChar}
                         onFocus={(e) => e.target.select()}
                         onChange={(e) => {
@@ -99,7 +177,7 @@ const ScoutingPage = () => {
             <section className="card">
                 <h2>賽場表現</h2>
                 <div className="form-group">
-                    <label>打法</label>
+                    <label>主要打法</label>
                     <select name="strategy" value={form.strategy} onChange={handleChange}>
                         <option value="防守">防守</option>
                         <option value="攻擊">攻擊</option>
@@ -136,14 +214,20 @@ const ScoutingPage = () => {
 
             <section className="card">
                 <label>補充說明</label>
-                <textarea name="remark" rows="4" placeholder="其他細節..." value={form.remark} onChange={handleChange}></textarea>
+                <textarea 
+                    name="remark" 
+                    rows="4" 
+                    placeholder="其他細節..." 
+                    value={form.remark} 
+                    onChange={handleChange}
+                ></textarea>
             </section>
 
-            <button className="submit-btn" onClick={handleSave} style={{ width: '100%', marginTop: '10px' }}>
+            <button className="submit-btn" onClick={handleSave} style={{ width: '100%', marginTop: '10px', marginBottom: '40px' }}>
                 儲存紀錄
             </button>
         </main>
     );
 };
 
-export default ScoutingPage;
+export default ScoringPage;
