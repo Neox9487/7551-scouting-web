@@ -3,7 +3,16 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs').promises;
+const morgan = require('morgan');
+
 const app = express();
+
+const logger = {
+    info: (msg) => console.log(`[${new Date().toLocaleString()}] INFO: ${msg}`),
+    error: (msg, err) => console.error(`[${new Date().toLocaleString()}] ERROR: ${msg}`, err || '')
+};
+
+app.use(morgan('dev')); 
 
 app.use(cors());
 app.use(express.json());
@@ -42,8 +51,9 @@ async function initDB() {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         `;
         await pool.query(createTableSql);
+        logger.info('資料庫與資料表初始化成功');
     } catch (err) {
-        console.error('資料庫初始化失敗:', err);
+        logger.error('資料庫初始化失敗', err);
     }
 }
 
@@ -56,7 +66,7 @@ app.get('/api/teams', async (req, res) => {
         const matchData = JSON.parse(data);
         res.json(matchData);
     } catch (err) {
-        console.error('讀取 matches.json 失敗:', err);
+        logger.error('讀取 matches.json 失敗', err);
         res.json({ practice: [], qualification: [] }); 
     }
 });
@@ -72,36 +82,48 @@ app.post('/api/save_data', async (req, res) => {
             d.team_number, d.match_id, d.match_type, d.station, d.auto_shot_pos, d.auto_max_score, 
             d.auto_climb, d.fixed_shot_pos, d.intake, d.strategy, d.climb_level, d.remark
         ]);
+        
+        logger.info(`成功新增紀錄: Team ${d.team_number}, Match ${d.match_id}`);
         res.status(201).json({ message: "儲存成功" });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { 
+        logger.error('儲存紀錄失敗', err);
+        res.status(500).json({ error: err.message }); 
+    }
 });
 
 app.get('/api/all_records', async (req, res) => {
     try {
         const [rows] = await pool.execute('SELECT * FROM records ORDER BY created_at DESC');
         res.json(rows);
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { 
+        logger.error('取得所有紀錄失敗', err);
+        res.status(500).json({ error: err.message }); 
+    }
 });
 
 app.get('/api/team_records/:number', async (req, res) => {
     try {
         const [rows] = await pool.execute('SELECT * FROM records WHERE team_number = ? ORDER BY created_at DESC', [req.params.number]);
         res.json(rows);
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { 
+        logger.error(`取得 Team ${req.params.number} 紀錄失敗`, err);
+        res.status(500).json({ error: err.message }); 
+    }
 });
 
 app.delete('/api/delete_record/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        const sql = 'DELETE FROM records WHERE id = ?';
-        const [result] = await pool.execute(sql, [id]);
+        const [result] = await pool.execute('DELETE FROM records WHERE id = ?', [id]);
 
         if (result.affectedRows > 0) {
+            logger.info(`已刪除紀錄 ID: ${id}`);
             res.json({ message: "紀錄已刪除" });
         } else {
             res.status(404).json({ error: "找不到該筆紀錄" });
         }
     } catch (err) {
+        logger.error(`刪除紀錄 ID ${req.params.id} 失敗`, err);
         res.status(500).json({ error: err.message });
     }
 });
@@ -110,4 +132,7 @@ app.get(/.*/, (req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
 });
 
-app.listen(3001, () => console.log('Server running on 3001'));
+const PORT = 3001;
+app.listen(PORT, () => {
+    logger.info(`伺服器啟動成功，運行於連接埠 ${PORT}`);
+});

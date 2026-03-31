@@ -7,7 +7,7 @@ set PORT=3001
 cls
 echo ==========================================
 echo  1. Start Local Mode  (Localhost only)
-echo  2. Start Test Mode   (With ngrok tunnel)
+echo  2. Start Global Mode   (With ngrok tunnel)
 echo  3. Run Setup Only    (Install/Build)
 echo  4. Exit
 echo ==========================================
@@ -66,8 +66,7 @@ if "%MODE%"=="LOCAL" (
 
 if %ERRORLEVEL% neq 0 (
     echo.
-    echo ERROR: Something went wrong! 
-    echo Check if port %PORT% is already in use.
+    echo ERROR: Something went wrong!
+    echo Please check the error message above, or check if port %PORT% is already in use.
     pause
 )
-goto :MENU
