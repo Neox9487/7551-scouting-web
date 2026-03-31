@@ -1,5 +1,5 @@
 @echo off
-title Multi-Service Starter
+title Service Starter
 
 echo [0/2] Checking environment...
 if not exist "%~dp0client\node_modules" goto :MISSING_SETUP

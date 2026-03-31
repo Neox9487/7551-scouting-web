@@ -26,7 +26,9 @@ ngrok -v
 
 2. 找到 `start.bat` 並雙擊執行，若出現 ngrok 畫面代表成功了  
    可以透過 ngrok 給你的隨機網址如 `https://xxxxx.ngrok-free.app` 來連到這個網站  
-   若使用區域網路連線，可以直接輸入 `http://(伺服器電腦 ip):3001` 連線到網站 (看不到 ngrok logging 資訊)
+
+若想要用使用區域網路連線就好(不用 ngrok)，可以直接跑 `start_without_ngrok.bat` 跑伺服器  
+只需連線到 `http://(伺服器電腦ip):3001`
 
 > 注意 : 每次重開 start.bat，ngrok 都會給你一串新的隨機網址
  
