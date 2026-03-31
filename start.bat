@@ -1,44 +1,73 @@
 @echo off
-title Service Starter
+setlocal
+title System Starter
+set PORT=3001
 
-echo [0/2] Checking environment...
-if not exist "%~dp0client\node_modules" goto :MISSING_SETUP
-if not exist "%~dp0server\node_modules" goto :MISSING_SETUP
-if not exist "%~dp0client\build" if not exist "%~dp0client\dist" goto :MISSING_SETUP
+:MENU
+cls
+echo ==========================================
+echo  1. Start Local Mode  (Localhost only)
+echo  2. Start Test Mode   (With ngrok tunnel)
+echo  3. Run Setup Only    (Install/Build)
+echo  4. Exit
+echo ==========================================
+set /p choice="Please enter your choice (1-4): "
 
-echo [1/2] Starting Backend Server...
+if "%choice%"=="1" goto :START_LOCAL
+if "%choice%"=="2" goto :START_NGROK
+if "%choice%"=="3" goto :CHECK_ENV
+if "%choice%"=="4" exit
+goto :MENU
+
+:CHECK_ENV
+echo.
+echo [1/2] Validating Frontend...
+cd /d "%~dp0client"
+if not exist "node_modules" (echo Installing client-side packages... & call npm install)
+if not exist "build" if not exist "dist" (echo Building frontend... & call npm run build)
+
+echo.
+echo [2/2] Validating Backend...
 cd /d "%~dp0server"
-start /b "Backend" node index.js
-if %ERRORLEVEL% neq 0 goto :START_FAILED
+if not exist "node_modules" (echo Installing server-side packages... & call npm install)
 
-timeout /t 3 >nul
+if "%choice%"=="3" (
+    echo.
+    echo Setup Complete!
+    pause
+    goto :MENU
+)
+goto :RUN_SERVER
 
-echo [2/2] Starting ngrok Tunnel...
-echo INFO: Press Ctrl+C to stop both ngrok and Server.
+:START_LOCAL
+set MODE=LOCAL
+goto :CHECK_ENV
 
-ngrok http 3001
-if %ERRORLEVEL% neq 0 goto :NGROK_FAILED
+:START_NGROK
+set MODE=NGROK
+goto :CHECK_ENV
 
-exit /b
+:RUN_SERVER
+cls
+echo  System is running in [%MODE%] mode
+cd /d "%~dp0server"
 
-:MISSING_SETUP
-echo.
-echo ERROR: Environment not ready!
-echo Missing node_modules or frontend build files.
-echo Please run "setup.bat" first to install dependencies.
-pause
-exit /b
+if "%MODE%"=="LOCAL" (
+    echo Server: http://localhost:%PORT%
+    echo Press Ctrl+C to stop.
+    node index.js
+) else (
+    echo Starting Backend in background...
+    start /b "Backend" node index.js
+    timeout /t 3 >nul
+    echo Launching ngrok tunnel...
+    ngrok http %PORT%
+)
 
-:START_FAILED
-echo.
-echo ERROR: Failed to start the Node.js server.
-echo Please check if "index.js" exists or if port 3001 is occupied.
-pause
-exit /b
-
-:NGROK_FAILED
-echo.
-echo ERROR: ngrok failed to launch.
-echo Make sure ngrok is installed and configured in your PATH.
-pause
-exit /b
+if %ERRORLEVEL% neq 0 (
+    echo.
+    echo ERROR: Something went wrong! 
+    echo Check if port %PORT% is already in use.
+    pause
+)
+goto :MENU
