@@ -184,7 +184,7 @@ const ScoreboardPage = () => {
                     <table>
                         <thead>
                             <tr>
-                                <th>隊號</th><th>總場次</th><th>主要打法</th><th>平均自動進球</th><th>最高自動進球</th><th>操作</th>
+                                <th>隊號</th><th>總場次</th><th>主要打法</th><th>平均自動進球</th><th>最高自動進球</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -195,7 +195,6 @@ const ScoreboardPage = () => {
                                     <td className='highlight'>{t.mainStrategy}</td>
                                     <td style={{color: 'var(--pink)'}}><b>{t.avgScore}</b></td>
                                     <td>{t.maxScore}</td>
-                                    <td><button className="view-btn" style={{padding: '4px 8px'}}>詳情</button></td>
                                 </tr>
                             ))}
                         </tbody>
