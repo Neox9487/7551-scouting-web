@@ -73,15 +73,8 @@ call npm run build
 echo.
 echo [2/2] Validating Backend...
 cd /d "%~dp0server"
-if not exist "node_modules" (
-    echo Installing server-side packages...
-    call npm install
-)
-
-if not exist "node_modules\dotenv" (
-    echo Dotenv module missing. Installing...
-    call npm install dotenv
-)
+echo Installing server-side packages...
+call npm install
 
 if "%choice%"=="3" (
     echo.
