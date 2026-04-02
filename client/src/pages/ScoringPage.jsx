@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const ScoringPage = () => {
-    const [allMatchData, setAllMatchData] = useState({ practice: [], qualification: [] });
+    const [allMatches, setAllMatches] = useState([]);
     const [availableTeams, setAvailableTeams] = useState([]);
     
     const STATIONS = ["Red 1", "Red 2", "Red 3", "Blue 1", "Blue 2", "Blue 3"];
 
     const [form, setForm] = useState({
-        match_type: 'qualification',
         match_id: '',
         team_number: '未選擇',
         station: '',
@@ -24,25 +23,15 @@ const ScoringPage = () => {
 
     useEffect(() => {
         axios.get('/api/teams')
-            .then(res => setAllMatchData(res.data))
+            .then(res => setAllMatches(res.data))
             .catch(err => console.error("無法取得場次資料"));
     }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        if (name === 'match_type') {
-            setAvailableTeams([]);
-            setForm(prev => ({ 
-                ...prev, 
-                match_type: value, 
-                match_id: '', 
-                team_number: '未選擇', 
-                station: '' 
-            }));
-        } else if (name === 'match_id') {
-            const currentList = allMatchData[form.match_type] || [];
-            const selectedMatchObj = currentList.find(m => String(m.match) === value);
+        if (name === 'match_id') {
+            const selectedMatchObj = allMatches.find(m => String(m.match) === value);
             if (selectedMatchObj) {
                 setAvailableTeams(selectedMatchObj.teams);
                 setForm(prev => ({ 
@@ -106,18 +95,10 @@ const ScoringPage = () => {
                 <h2>基本資訊</h2>
                 
                 <div className="form-group">
-                    <label>比賽類型</label>
-                    <select name="match_type" value={form.match_type} onChange={handleChange}>
-                        <option value="qualification">Qualification</option>
-                        <option value="practice">Practice</option>
-                    </select>
-                </div>
-
-                <div className="form-group">
                     <label>場次</label>
                     <select name="match_id" value={form.match_id} onChange={handleChange}>
                         <option value="">-- 請選擇場次 --</option>
-                        {(allMatchData[form.match_type] || []).map(m => (
+                        {allMatches.map(m => (
                             <option key={m.match} value={m.match}>Match {m.match}</option>
                         ))}
                     </select>

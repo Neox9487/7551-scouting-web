@@ -35,7 +35,7 @@ app.get('/api/teams', async (req, res) => {
         res.json(matchData);
     } catch (err) {
         logger.error('Failed to read matches.json', err);
-        res.json({ practice: [], qualification: [] }); 
+        res.json([]); 
     }
 });
 
@@ -43,11 +43,11 @@ app.post('/api/save_data', async (req, res) => {
     try {
         const d = req.body;
         const sql = `INSERT INTO records 
-        (team_number, match_id, match_type, station, auto_shot_pos, auto_max_score, auto_climb, fixed_shot_pos, intake, strategy, climb_level, remark) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        (team_number, match_id, station, auto_shot_pos, auto_max_score, auto_climb, fixed_shot_pos, intake, strategy, climb_level, remark) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
         await pool.execute(sql, [
-            d.team_number, d.match_id, d.match_type, d.station, d.auto_shot_pos, d.auto_max_score, 
+            d.team_number, d.match_id, d.station, d.auto_shot_pos, d.auto_max_score, 
             d.auto_climb, d.fixed_shot_pos, d.intake, d.strategy, d.climb_level, d.remark
         ]);
         
@@ -112,7 +112,6 @@ async function initDB() {
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 team_number VARCHAR(20) NOT NULL,
                 match_id INT NOT NULL,
-                match_type ENUM('practice', 'qualification') DEFAULT 'practice',
                 station VARCHAR(50),
                 auto_shot_pos VARCHAR(100),
                 auto_max_score INT DEFAULT 0,

@@ -12,7 +12,7 @@ const ScoreboardPage = () => {
     useEffect(() => {
         axios.get('/api/all_records')
             .then(res => setRecords(res.data))
-            .catch(err => console.error(err));
+            .catch(err => console.error("無法取得紀錄資料", err));
     }, []);
 
     const handleViewModeChange = (e) => {
@@ -39,9 +39,6 @@ const ScoreboardPage = () => {
             .filter(r => String(r.team_number).includes(filter.team))
             .sort((a, b) => {
                 if (sortKey === 'match_id') {
-                    if (a.match_type !== b.match_type) {
-                        return a.match_type === 'practice' ? -1 : 1;
-                    }
                     return Number(a.match_id) - Number(b.match_id);
                 }
                 if (sortKey === 'created_at') return new Date(b.created_at) - new Date(a.created_at);
@@ -63,7 +60,6 @@ const ScoreboardPage = () => {
                     count: 0,
                     latestTime: r.created_at,
                     latestMatchId: r.match_id,
-                    latestMatchType: r.match_type,
                     strategies: {}
                 };
             }
@@ -76,7 +72,6 @@ const ScoreboardPage = () => {
             if (new Date(r.created_at) > new Date(g.latestTime)) {
                 g.latestTime = r.created_at;
                 g.latestMatchId = r.match_id;
-                g.latestMatchType = r.match_type;
             }
         });
 
@@ -170,7 +165,7 @@ const ScoreboardPage = () => {
                             {filteredRecords.map(r => (
                                 <tr key={r.id} onClick={() => navigate(`/team/${r.team_number}`)}>
                                     <td>{r.team_number}</td>
-                                    <td className='highlight'>{r.match_type === 'practice' ? "Prac" : "Qual"} {r.match_id}</td>
+                                    <td className='highlight'>Match {r.match_id}</td>
                                     <td className='highlight'>{r.station}</td>
                                     <td className='highlight'>{r.strategy}</td>
                                     <td>{r.auto_max_score}</td>
@@ -202,7 +197,7 @@ const ScoreboardPage = () => {
                 )}
             </div>
         </main>
-    );
+    ); 
 };
 
 export default ScoreboardPage;
