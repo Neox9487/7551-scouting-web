@@ -104,8 +104,8 @@ const PORT = 3001;
 
 async function initDB() {
     try {
-        await pool.query('CREATE DATABASE IF NOT EXISTS frc_scouting');
-        await pool.query('USE frc_scouting');
+        await pool.query('CREATE DATABASE IF NOT EXISTS frc_scoring');
+        await pool.query('USE frc_scoring');
         
         const createTableSql = `
             CREATE TABLE IF NOT EXISTS records (
