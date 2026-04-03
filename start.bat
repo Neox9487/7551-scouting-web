@@ -1,7 +1,19 @@
 @echo off
+
+:CHECK_PERMISSIONS
+echo [INFO] Checking administrative privileges...
+net session >nul 2>&1
+if %ERRORLEVEL% == 0 (
+    echo [SUCCESS] Running with administrative privileges.
+) else (
+    echo [INFO] Insufficient privileges. Requesting Administrator access...
+    ::idk what is this
+    powershell -Command "Start-Process -FilePath '%~f0' -Verb RunAs"
+    exit /b
+)
+
 setlocal enabledelayedexpansion
 title System Control Panel
-:: idk
 set PORT=3001
 
 :CHECK_NODE

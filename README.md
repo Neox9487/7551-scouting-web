@@ -11,7 +11,7 @@
 照以下步驟執行
 
 1. 找到資料夾內的 `start.bat` 後雙擊執行  
-2. 選擇模式 `4` 取得最新的場次資訊，輸入 `event key` (如 `2026tuis`) 跟你的 `TPA  API Key` (要道 TPA 官網拿)
+2. 選擇模式 `4` 取得最新的場次資訊，輸入 `event key` (如 `2026tuis`) 跟你的 `TPA  API Key` (要到 TPA 官網拿)
 3. 選擇模式 `1` (Local Mode) 或 `2` (Global Mode), 輸入你的 MySQL 帳號密碼
 
 順利的話伺服器就會自己跑起來了
