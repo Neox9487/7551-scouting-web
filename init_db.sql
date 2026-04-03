@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS frc_scouting;
-USE frc_scouting;
+CREATE DATABASE IF NOT EXISTS frc_scoring;
+USE frc_scoring;
 
 CREATE TABLE IF NOT EXISTS records (
     id INT AUTO_INCREMENT PRIMARY KEY,
