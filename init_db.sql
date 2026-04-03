@@ -4,7 +4,6 @@ USE frc_scouting;
 CREATE TABLE IF NOT EXISTS records (
     id INT AUTO_INCREMENT PRIMARY KEY,
     team_number VARCHAR(20) NOT NULL,
-    match_type ENUM('practice', 'qualification') DEFAULT 'practice',
     match_id INT NOT NULL,
     station VARCHAR(50),
     auto_shot_pos VARCHAR(100),
