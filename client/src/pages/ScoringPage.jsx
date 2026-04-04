@@ -97,7 +97,7 @@ const ScoringPage = () => {
                 <div className="form-group">
                     <label>場次</label>
                     <select name="match_id" value={form.match_id} onChange={handleChange}>
-                        <option value="">-- 請選擇場次 --</option>
+                        <option value="">請選擇場次</option>
                         {allMatches.map(m => (
                             <option key={m.match} value={m.match}>Match {m.match}</option>
                         ))}
@@ -112,10 +112,10 @@ const ScoringPage = () => {
                         onChange={handleChange}
                         disabled={!form.match_id}
                     >
-                        <option value="-1">-- 請選擇隊伍 --</option>
+                        <option value="-1">請選擇隊伍</option>
                         {availableTeams.map((team, idx) => (
                             <option key={idx} value={idx}>
-                                {STATIONS[idx]}: {team}
+                                {STATIONS[idx]} - {team}
                             </option>
                         ))}
                     </select>
